@@ -5,6 +5,8 @@ import { isUserLoggedIn } from "./actions";
 import "./App.css";
 import PrivateRoute from "./components/HOC/PrivateRoute";
 import Home from "./containers/Home";
+import Orders from "./containers/Orders";
+import Products from "./containers/Products";
 import Signin from "./containers/Signin";
 import Signup from "./containers/Signup";
 
@@ -22,6 +24,9 @@ function App() {
     <div className="App">
       <Switch>
         <PrivateRoute path="/" exact component={Home} />
+        <PrivateRoute path="/products" component={Products} />
+        <PrivateRoute path="/orders" component={Orders} />
+
         <Route path="/signin" component={Signin} />
         <Route path="/signup" component={Signup} />
       </Switch>
