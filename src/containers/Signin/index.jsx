@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import Layout from "../../components/Layout";
-import { Container, Form, Row, Col, Button } from "react-bootstrap";
-import Input from "../../components/UI/Input";
-import { isUserLoggedIn, login } from "../../actions";
+import React, { useState } from "react";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { Redirect } from "react-router-dom";
+import { login } from "../../actions";
+import Layout from "../../components/Layout";
+import Input from "../../components/UI/Input";
 
 function Signin() {
   const [email, setEmail] = useState("");
@@ -12,12 +12,6 @@ function Signin() {
   const [error, setError] = useState("");
   const auth = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (!auth.authenticate) {
-      dispatch(isUserLoggedIn());
-    }
-  }, []);
 
   const userLogin = (e) => {
     e.preventDefault();
