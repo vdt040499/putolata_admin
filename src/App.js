@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Route, Switch } from "react-router-dom";
 import { isUserLoggedIn } from "./actions";
+import { getInitialData } from "./actions/initialData.action";
 import "./App.css";
 import PrivateRoute from "./components/HOC/PrivateRoute";
 import Category from "./containers/Category";
@@ -14,11 +15,13 @@ import Signup from "./containers/Signup";
 function App() {
   const auth = useSelector(state => state.auth);
   const dispatch = useDispatch()
-  
+
   useEffect(() => {
     if (!auth.authenticate) {
       dispatch(isUserLoggedIn());
     }
+
+    dispatch(getInitialData());
   }, []);
 
   return (
