@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { addCategory, getAllCategory, updateCategories } from "../../actions";
+import {
+  addCategory,
+  getAllCategory,
+  updateCategories,
+  deleteCategories as deleteCategoriesAction,
+} from "../../actions";
 import Layout from "../../components/Layout";
 import Input from "../../components/UI/Input";
 import Modal from "../../components/UI/Modal";
@@ -26,6 +31,7 @@ function Category() {
   const [checkedArray, setCheckedArray] = useState([]);
   const [expandedArray, setExpandedArray] = useState([]);
   const [updateCategoryModal, setUpdateCategoryModal] = useState(false);
+  const [deleteCategoryModal, setDeleteCategoryModal] = useState(false);
 
   const handleClose = () => {
     const form = new FormData();
@@ -75,7 +81,11 @@ function Category() {
   };
 
   const updateCategory = () => {
+    updateCheckedAndExpandedCategories();
     setUpdateCategoryModal(true);
+  };
+
+  const updateCheckedAndExpandedCategories = () => {
     const categories = createCategoryList(category.categories);
     const checkedArray = [];
     const expandedArray = [];
@@ -97,7 +107,6 @@ function Category() {
 
     setCheckedArray(checkedArray);
     setExpandedArray(expandedArray);
-    console.log({ checked, expanded, categories, checkedArray, expandedArray });
   };
 
   const handleCategoryInput = (key, value, index, type) => {
@@ -118,28 +127,26 @@ function Category() {
     const form = new FormData();
 
     expandedArray.forEach((item, index) => {
-      form.append('_id', item.value);
-      form.append('name', item.name);
-      form.append('parentId', item.parentId ? item.parentId : "");
-      form.append('type', item.type);
-
+      form.append("_id", item.value);
+      form.append("name", item.name);
+      form.append("parentId", item.parentId ? item.parentId : "");
+      form.append("type", item.type);
     });
 
     checkedArray.forEach((item, index) => {
-      form.append('_id', item.value);
-      form.append('name', item.name);
-      form.append('parentId', item.parentId ? item.parentId : "");
-      form.append('type', item.type);
+      form.append("_id", item.value);
+      form.append("name", item.name);
+      form.append("parentId", item.parentId ? item.parentId : "");
+      form.append("type", item.type);
     });
 
-    dispatch(updateCategories(form))
-    .then(result => {
+    dispatch(updateCategories(form)).then((result) => {
       if (result) {
         dispatch(getAllCategory());
       }
-    })
+    });
     setUpdateCategoryModal(false);
-  }
+  };
 
   const renderUpdateCategoriesModal = () => {
     return (
@@ -298,6 +305,60 @@ function Category() {
     );
   };
 
+  const deleteCategory = () => {
+    updateCheckedAndExpandedCategories();
+    setDeleteCategoryModal(true);
+  };
+
+  const deleteCategories = () => {
+    const checkedIdsArray = checkedArray.map((item, index) => ({
+      _id: item.value,
+    }));
+    const expandedIdsArray = expandedArray.map((item, index) => ({
+      _id: item.value,
+    }));
+    const idsArray = expandedIdsArray.concat(checkedIdsArray);
+    dispatch(deleteCategoriesAction(idsArray)).then((result) => {
+      if (result) {
+        dispatch(getAllCategory());
+        setDeleteCategoryModal(false);
+      }
+    });
+  };
+
+  const renderDeleteCategoryModal = () => {
+    return (
+      <Modal
+        modalTitle="Confirm"
+        show={deleteCategoryModal}
+        handleClose={() => setDeleteCategoryModal(false)}
+        buttons={[
+          {
+            label: "No",
+            color: "primary",
+            onClick: () => {
+              alert("no");
+            },
+          },
+          {
+            label: "Yes",
+            color: "danger",
+            onClick: deleteCategories,
+          },
+        ]}
+      >
+        <h5>Expanded</h5>
+        {expandedArray.map((item, index) => (
+          <span key={index}>{item.name}</span>
+        ))}
+        <h5>Checked</h5>
+        {checkedArray.map((item, index) => (
+          <span key={index}>{item.name}</span>
+        ))}
+      </Modal>
+    );
+  };
+
   return (
     <div>
       <Layout sidebar>
@@ -331,13 +392,14 @@ function Category() {
           </Row>
           <Row>
             <Col>
-              <button>Delete</button>
+              <button onClick={deleteCategory}>Delete</button>
               <button onClick={updateCategory}>Edit</button>
             </Col>
           </Row>
         </Container>
         {renderAddCategoryModal()}
         {renderUpdateCategoriesModal()}
+        {renderDeleteCategoryModal()}
       </Layout>
     </div>
   );
