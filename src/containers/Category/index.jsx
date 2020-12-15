@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { addCategory, getAllCategory } from "../../actions";
+import { addCategory, getAllCategory, updateCategories } from "../../actions";
 import Layout from "../../components/Layout";
 import Input from "../../components/UI/Input";
 import Modal from "../../components/UI/Modal";
@@ -114,6 +114,190 @@ function Category() {
     }
   };
 
+  const updateCategoriesForm = () => {
+    const form = new FormData();
+
+    expandedArray.forEach((item, index) => {
+      form.append('_id', item.value);
+      form.append('name', item.name);
+      form.append('parentId', item.parentId ? item.parentId : "");
+      form.append('type', item.type);
+
+    });
+
+    checkedArray.forEach((item, index) => {
+      form.append('_id', item.value);
+      form.append('name', item.name);
+      form.append('parentId', item.parentId ? item.parentId : "");
+      form.append('type', item.type);
+    });
+
+    dispatch(updateCategories(form))
+    .then(result => {
+      if (result) {
+        dispatch(getAllCategory());
+      }
+    })
+    setUpdateCategoryModal(false);
+  }
+
+  const renderUpdateCategoriesModal = () => {
+    return (
+      <Modal
+        show={updateCategoryModal}
+        handleClose={updateCategoriesForm}
+        modalTitle="Update Categoryies"
+        size="lg"
+      >
+        <Row>
+          <Col>
+            <h6>Expanded</h6>
+          </Col>
+        </Row>
+        {expandedArray.length > 0 &&
+          expandedArray.map((item, index) => (
+            <Row key={index}>
+              <Col>
+                <Input
+                  value={item.name}
+                  placeholder={`Category Name`}
+                  onChange={(e) =>
+                    handleCategoryInput(
+                      "name",
+                      e.target.value,
+                      index,
+                      "expanded"
+                    )
+                  }
+                />
+              </Col>
+              <Col>
+                <select
+                  className="form-control"
+                  value={item.parentId}
+                  onChange={(e) =>
+                    handleCategoryInput(
+                      "parentId",
+                      e.target.value,
+                      index,
+                      "expanded"
+                    )
+                  }
+                >
+                  <option>select category</option>
+                  {createCategoryList(category.categories).map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.name}
+                    </option>
+                  ))}
+                </select>
+              </Col>
+              <Col>
+                <select className="form-control">
+                  <option value="">Select Type</option>
+                  <option value="store">Store</option>
+                  <option value="product">Product</option>
+                  <option value="page">Page</option>
+                </select>
+              </Col>
+            </Row>
+          ))}
+
+        <h6>Checked Categories</h6>
+
+        {checkedArray.length > 0 &&
+          checkedArray.map((item, index) => (
+            <Row key={index}>
+              <Col>
+                <Input
+                  value={item.name}
+                  placeholder={`Category Name`}
+                  onChange={(e) =>
+                    handleCategoryInput(
+                      "name",
+                      e.target.value,
+                      index,
+                      "checked"
+                    )
+                  }
+                />
+              </Col>
+              <Col>
+                <select
+                  className="form-control"
+                  value={item.parentId}
+                  onChange={(e) =>
+                    handleCategoryInput(
+                      "parentId",
+                      e.target.value,
+                      index,
+                      "checked"
+                    )
+                  }
+                >
+                  <option>select category</option>
+                  {createCategoryList(category.categories).map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.name}
+                    </option>
+                  ))}
+                </select>
+              </Col>
+              <Col>
+                <select className="form-control">
+                  <option value="">Select Type</option>
+                  <option value="store">Store</option>
+                  <option value="product">Product</option>
+                  <option value="page">Page</option>
+                </select>
+              </Col>
+            </Row>
+          ))}
+
+        {/* <input
+                type="file"
+                name="categoryImage"
+                onChange={handleCategoryImage}
+              /> */}
+      </Modal>
+    );
+  };
+
+  const renderAddCategoryModal = () => {
+    return (
+      <Modal
+        show={show}
+        handleClose={handleClose}
+        modalTitle="Add New Category"
+      >
+        <Input
+          value={categoryName}
+          placeholder={`Category Name`}
+          onChange={(e) => setCategoryName(e.target.value)}
+        />
+
+        <select
+          className="form-control"
+          value={parentCategoryId}
+          onChange={(e) => setParentCategoryId(e.target.value)}
+        >
+          <option>select category</option>
+          {createCategoryList(category.categories).map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.name}
+            </option>
+          ))}
+        </select>
+
+        <input
+          type="file"
+          name="categoryImage"
+          onChange={handleCategoryImage}
+        />
+      </Modal>
+    );
+  };
+
   return (
     <div>
       <Layout sidebar>
@@ -152,157 +336,8 @@ function Category() {
             </Col>
           </Row>
         </Container>
-
-        <Modal
-          show={show}
-          handleClose={handleClose}
-          modalTitle="Add New Category"
-        >
-          <Input
-            value={categoryName}
-            placeholder={`Category Name`}
-            onChange={(e) => setCategoryName(e.target.value)}
-          />
-
-          <select
-            className="form-control"
-            value={parentCategoryId}
-            onChange={(e) => setParentCategoryId(e.target.value)}
-          >
-            <option>select category</option>
-            {createCategoryList(category.categories).map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.name}
-              </option>
-            ))}
-          </select>
-
-          <input
-            type="file"
-            name="categoryImage"
-            onChange={handleCategoryImage}
-          />
-        </Modal>
-
-        {/* Edit Categories */}
-
-        <Modal
-          show={updateCategoryModal}
-          handleClose={() => setUpdateCategoryModal(false)}
-          modalTitle="Update Categoryies"
-          size="lg"
-        >
-          <Row>
-            <Col>
-              <h6>Expanded</h6>
-            </Col>
-          </Row>
-          {expandedArray.length > 0 &&
-            expandedArray.map((item, index) => (
-              <Row key={index}>
-                <Col>
-                  <Input
-                    value={item.name}
-                    placeholder={`Category Name`}
-                    onChange={(e) =>
-                      handleCategoryInput(
-                        "name",
-                        e.target.value,
-                        index,
-                        "expanded"
-                      )
-                    }
-                  />
-                </Col>
-                <Col>
-                  <select
-                    className="form-control"
-                    value={item.parentId}
-                    onChange={(e) =>
-                      handleCategoryInput(
-                        "parentId",
-                        e.target.value,
-                        index,
-                        "expanded"
-                      )
-                    }
-                  >
-                    <option>select category</option>
-                    {createCategoryList(category.categories).map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.name}
-                      </option>
-                    ))}
-                  </select>
-                </Col>
-                <Col>
-                  <select className="form-control">
-                    <option value="">Select Type</option>
-                    <option value="store">Store</option>
-                    <option value="product">Product</option>
-                    <option value="page">Page</option>
-                  </select>
-                </Col>
-              </Row>
-            ))}
-
-          <h6>Checked Categories</h6>
-
-          {checkedArray.length > 0 &&
-            checkedArray.map((item, index) => (
-              <Row key={index}>
-                <Col>
-                  <Input
-                    value={item.name}
-                    placeholder={`Category Name`}
-                    onChange={(e) =>
-                      handleCategoryInput(
-                        "name",
-                        e.target.value,
-                        index,
-                        "checked"
-                      )
-                    }
-                  />
-                </Col>
-                <Col>
-                  <select
-                    className="form-control"
-                    value={item.parentId}
-                    onChange={(e) =>
-                      handleCategoryInput(
-                        "parentId",
-                        e.target.value,
-                        index,
-                        "checked"
-                      )
-                    }
-                  >
-                    <option>select category</option>
-                    {createCategoryList(category.categories).map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.name}
-                      </option>
-                    ))}
-                  </select>
-                </Col>
-                <Col>
-                  <select className="form-control">
-                    <option value="">Select Type</option>
-                    <option value="store">Store</option>
-                    <option value="product">Product</option>
-                    <option value="page">Page</option>
-                  </select>
-                </Col>
-              </Row>
-            ))}
-
-          {/* <input
-            type="file"
-            name="categoryImage"
-            onChange={handleCategoryImage}
-          /> */}
-        </Modal>
+        {renderAddCategoryModal()}
+        {renderUpdateCategoriesModal()}
       </Layout>
     </div>
   );
