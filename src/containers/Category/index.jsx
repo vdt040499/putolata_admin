@@ -150,11 +150,7 @@ function Category() {
       form.append("type", item.type);
     });
 
-    dispatch(updateCategories(form)).then((result) => {
-      if (result) {
-        dispatch(getAllCategory());
-      }
-    });
+    dispatch(updateCategories(form));
     setUpdateCategoryModal(false);
   };
 
