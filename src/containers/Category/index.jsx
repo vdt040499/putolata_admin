@@ -39,13 +39,21 @@ function Category() {
   const [updateCategoryModal, setUpdateCategoryModal] = useState(false);
   const [deleteCategoryModal, setDeleteCategoryModal] = useState(false);
 
+  useEffect(() => {
+    if (!category.loading) {
+      setShow(false);
+    }
+
+  }, [category.loading]);
+
   const handleClose = () => {
     const form = new FormData();
 
-    // if (categoryName === "") {
-    //   alert("Name is required");
-    //   return;
-    // }
+    if (categoryName === "") {
+      alert('Category name is required');
+      setShow(false);
+      return;
+    }
 
     form.append("name", categoryName);
     form.append("parentId", parentCategoryId);
@@ -137,6 +145,8 @@ function Category() {
   const updateCategoriesForm = () => {
     const form = new FormData();
 
+    
+
     expandedArray.forEach((item, index) => {
       form.append("_id", item.value);
       form.append("name", item.name);
@@ -152,42 +162,6 @@ function Category() {
     });
 
     dispatch(updateCategories(form));
-    setUpdateCategoryModal(false);
-  };
-
-  const renderAddCategoryModal = () => {
-    return (
-      <Modal
-        show={show}
-        handleClose={handleClose}
-        modalTitle="Add New Category"
-      >
-        <Input
-          value={categoryName}
-          placeholder={`Category Name`}
-          onChange={(e) => setCategoryName(e.target.value)}
-        />
-
-        <select
-          className="form-control"
-          value={parentCategoryId}
-          onChange={(e) => setParentCategoryId(e.target.value)}
-        >
-          <option>select category</option>
-          {createCategoryList(category.categories).map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.name}
-            </option>
-          ))}
-        </select>
-
-        <input
-          type="file"
-          name="categoryImage"
-          onChange={handleCategoryImage}
-        />
-      </Modal>
-    );
   };
 
   const deleteCategory = () => {
@@ -299,7 +273,8 @@ function Category() {
 
         <AddCategoryModal
           show={show}
-          handleClose={handleClose}
+          handleClose={() => setShow(false)}
+          onSubmit={handleClose}
           modalTitle={"Add New Category"}
           categoryName={categoryName}
           setCategoryName={setCategoryName}
@@ -310,7 +285,8 @@ function Category() {
         />
         <UpdateCategoriesModal
           show={updateCategoryModal}
-          handleClose={updateCategoriesForm}
+          handleClose={() => setUpdateCategoryModal(false)}
+          onSubmit={updateCategoriesForm}
           modalTitle={"Update Categoryies"}
           size="lg"
           expandedArray={expandedArray}
@@ -318,7 +294,6 @@ function Category() {
           handleCategoryInput={handleCategoryInput}
           categoryList={categoryList}
         />
-        {/* {renderAddCategoryModal()} */}
         {renderDeleteCategoryModal()}
       </Layout>
     </div>

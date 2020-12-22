@@ -18,15 +18,28 @@ const NewPage = (props) => {
   const [banners, setBanners] = useState([]);
   const [products, setProducts] = useState([]);
   const dispatch = useDispatch();
+  const page = useSelector((state) => state.page);
 
   useEffect(() => {
     setCategories(linearCategories(category.categories));
   }, [category]);
 
+  useEffect(() => {
+    console.log(page);
+    if (!page.loading) {
+      setCreateModal(false);
+      setTitle('');
+      setCategoryId('');
+      setDesc('');
+      setProducts([]);
+      setBanners([]);
+    }
+  }, [page]);
+
   const onCategoryChange = (e) => {
     console.log(e.target.value);
     const category = categories.find(
-      (category) => category._id == e.target.value
+      (category) => category.value == e.target.value
     );
     setCategoryId(e.target.value);
     setType(category.type);
@@ -71,12 +84,13 @@ const NewPage = (props) => {
       <Modal
         show={createModal}
         modalTitle={"Create New Page"}
-        handleClose={submitPageForm}
+        handleClose={() => setCreateModal(false)}
+        onSubmit={submitPageForm}
       >
         <Container>
           <Row>
             <Col>
-              <select
+              {/* <select
                 className="form-control"
                 value={categoryId}
                 onChange={onCategoryChange}
@@ -87,7 +101,14 @@ const NewPage = (props) => {
                     {cat.name}
                   </option>
                 ))}
-              </select>
+              </select> */}
+              <Input
+                type="select"
+                value={categoryId}
+                onChange={onCategoryChange}
+                options={categories}
+                placeholder={'Select Category'}
+              />
             </Col>
           </Row>
 
@@ -155,8 +176,14 @@ const NewPage = (props) => {
 
   return (
     <Layout sidebar>
-      {renderCreatePageModal()}
-      <button onClick={() => setCreateModal(true)}>Create Page</button>
+      {page.loading ? (
+        <p>Create Page... please wait</p>
+      ) : (
+        <>
+          {renderCreatePageModal()}
+          <button onClick={() => setCreateModal(true)}>Create Page</button>
+        </>
+      )}
     </Layout>
   );
 };
