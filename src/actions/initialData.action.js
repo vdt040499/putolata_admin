@@ -6,7 +6,7 @@ export const getInitialData = () => {
 
         const res = await axiosInstance.post('/initialData');
         if (res.status === 200) {
-            const { categories, products } = res.data;
+            const { categories, products, orders } = res.data;
             dispatch({
                 type: categoryConstants.GET_ALL_CATEGORIES_SUCCESS,
                 payload: { categories }
