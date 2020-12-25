@@ -1,5 +1,5 @@
 import axiosInstance from "../helpers/axios";
-import { categoryConstants, initialDataConstants, productConstants } from "./constants";
+import { categoryConstants, initialDataConstants, orderConstants, productConstants } from "./constants";
 
 export const getInitialData = () => {
     return async dispatch => {
@@ -14,7 +14,11 @@ export const getInitialData = () => {
             dispatch({
                 type: productConstants.GET_ALL_PRODUCTS_SUCCESS,
                 payload: { products }
-            })
+            });
+            dispatch({
+                type: orderConstants.GET_CUSTOMER_ORDER_SUCCESS,
+                payload: { orders }
+            });
         }
         console.log(res);
     }
