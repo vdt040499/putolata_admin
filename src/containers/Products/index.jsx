@@ -23,6 +23,10 @@ function Products(props) {
   const dispatch = useDispatch();
 
   const handleClose = () => {
+    setShow(false);
+  };
+
+  const submitProductForm = () => {
     const form = new FormData();
     form.append("name", name);
     form.append("quantity", quantity);
@@ -34,8 +38,7 @@ function Products(props) {
       form.append("productPicture", pic);
     }
 
-    dispatch(addProduct(form));
-    setShow(false);
+    dispatch(addProduct(form)).then(() => setShow(false));
   };
 
   const handleShow = () => setShow(true);
@@ -89,7 +92,12 @@ function Products(props) {
 
   const renderAddProductModal = () => {
     return (
-      <Modal show={show} handleClose={handleClose} modalTitle="Add new product">
+      <Modal
+        show={show}
+        handleClose={handleClose}
+        onSubmit={submitProductForm}
+        modalTitle="Add new product"
+      >
         <Input
           label="Name"
           value={name}
