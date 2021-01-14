@@ -43,22 +43,18 @@ function Category() {
     if (!category.loading) {
       setShow(false);
     }
-
   }, [category.loading]);
 
   const handleClose = () => {
-    const form = new FormData();
-
     if (categoryName === "") {
-      alert('Category name is required');
+      alert("Category name is required");
       setShow(false);
       return;
     }
 
-    form.append("name", categoryName);
-    form.append("parentId", parentCategoryId);
-    form.append("categoryImage", categoryImage);
+    const form = { name: categoryName, parentId: parentCategoryId };
     console.log(form);
+
     dispatch(addCategory(form));
     setCategoryName("");
     setParentCategoryId("");
@@ -85,7 +81,6 @@ function Category() {
         value: category._id,
         name: category.name,
         parentId: category.parentId,
-        type: category.type
       });
       if (category.children.length > 0) {
         createCategoryList(category.children, options);
@@ -143,25 +138,22 @@ function Category() {
   };
 
   const updateCategoriesForm = () => {
-    const form = new FormData();
-
-    
+    const form = { _id: [], name: [], parentId: [] };
 
     expandedArray.forEach((item, index) => {
-      form.append("_id", item.value);
-      form.append("name", item.name);
-      form.append("parentId", item.parentId ? item.parentId : "");
-      form.append("type", item.type);
+      form._id.push(item.value);
+      form.name.push(item.name);
+      form.parentId.push(item.parentId ? item.parentId : "");
     });
 
     checkedArray.forEach((item, index) => {
-      form.append("_id", item.value);
-      form.append("name", item.name);
-      form.append("parentId", item.parentId ? item.parentId : "");
-      form.append("type", item.type);
+      form._id.push(item.value);
+      form.name.push(item.name);
+      form.parentId.push(item.parentId ? item.parentId : "");
     });
 
     dispatch(updateCategories(form));
+    setUpdateCategoryModal(false);
   };
 
   const deleteCategory = () => {

@@ -17,6 +17,7 @@ const Card = (props) => {
                 alignSelf: "center",
                 fontSize: "20px",
                 fontWeight: "500",
+                textTransform: "uppercase"
               }}
             >
               {props.headerLeft}

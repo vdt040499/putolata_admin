@@ -13,6 +13,7 @@ function Products(props) {
   const [quantity, setQuantity] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
+  const [detailDescription, setDetailDescription] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [productPictures, setProductPictures] = useState([]);
   const [show, setShow] = useState(false);
@@ -32,6 +33,7 @@ function Products(props) {
     form.append("quantity", quantity);
     form.append("price", price);
     form.append("description", description);
+    form.append("detailDescription", detailDescription);
     form.append("category", categoryId);
 
     for (let pic of productPictures) {
@@ -125,6 +127,12 @@ function Products(props) {
           placeholder={`Description`}
           onChange={(e) => setDescription(e.target.value)}
         />
+        <Input
+          label="Detail Description"
+          value={detailDescription}
+          placeholder={`Detail Description`}
+          onChange={(e) => setDetailDescription(e.target.value)}
+        />
 
         <select
           className="form-control"
@@ -207,7 +215,7 @@ function Products(props) {
             <div style={{ display: "flex" }}>
               {productDetails.productPictures.map((picture) => (
                 <div className="productImgContainer">
-                  <img src={generatePublicUrl(picture.img)} />
+                  <img src={picture.img} />
                 </div>
               ))}
             </div>

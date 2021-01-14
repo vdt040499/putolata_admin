@@ -45,7 +45,7 @@ function Orders(props) {
             }}
           >
             <div>
-              <div className="title">Items</div>
+              <div className="title">Sản phẩm</div>
               {orderItem.items.map((item, index) => (
                 <div className="value" key={index}>
                   {item.productId.name}
@@ -53,17 +53,9 @@ function Orders(props) {
               ))}
             </div>
             <div>
-              <span className="title">Total Price</span>
+              <span className="title">Tổng tiền</span>
               <br />
               <span className="value">{orderItem.totalAmount}</span>
-            </div>
-            <div>
-              <span className="title">Payment Type</span> <br />
-              <span className="value">{orderItem.paymentType}</span>
-            </div>
-            <div>
-              <span className="title">Payment Status</span> <br />
-              <span className="value">{orderItem.paymentStatus}</span>
             </div>
           </div>
           <div

@@ -14,11 +14,16 @@ const AddCategoryModal = (props) => {
     setParentCategoryId,
     categoryList,
     handleCategoryImage,
-    onSubmit
+    onSubmit,
   } = props;
 
   return (
-    <Modal show={show} handleClose={handleClose} onSubmit={onSubmit} modalTitle={modalTitle}>
+    <Modal
+      show={show}
+      handleClose={handleClose}
+      onSubmit={onSubmit}
+      modalTitle={modalTitle}
+    >
       <Row>
         <Col>
           <Input
@@ -41,15 +46,6 @@ const AddCategoryModal = (props) => {
               </option>
             ))}
           </select>
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <input
-            type="file"
-            name="categoryImage"
-            onChange={handleCategoryImage}
-          />
         </Col>
       </Row>
     </Modal>
